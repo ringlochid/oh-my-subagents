@@ -340,9 +340,11 @@ def _build_workflow_edit_tools(
         bind_operator_tool(
             name=OperatorToolName.WORKFLOW_DRAFT_CREATE,
             description=(
-                "Create a draft from one complete structured JSON Workflow. If that "
-                "Workflow already has an active draft, pass its current ETag to replace it. "
-                "Returns only its current draft reference and optional Undo receipt."
+                "Create a draft from one complete nested JSON Workflow using lead and children; "
+                "do not copy workflow_get read-projection fields such as lead_member_id, member, "
+                "child_ids, or flat members. If that Workflow already has an active draft, pass "
+                "its current ETag to replace it. Returns only its current draft reference and "
+                "optional Undo receipt."
             ),
             input_model=WorkflowDraftCreateInput,
             handler=leaves.create_draft,

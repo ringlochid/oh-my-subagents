@@ -10,11 +10,13 @@ from typing import Any, TypeVar, cast
 from claude_agent_sdk import (
     ClaudeAgentOptions,
     ClaudeSDKClient,
+    McpSdkServerConfig,
     SdkMcpTool,
     create_sdk_mcp_server,
     tool,
 )
 from claude_agent_sdk.types import EffortLevel, ResultMessage
+from mcp.types import CallToolResult, TextContent
 from pydantic import ValidationError
 
 from oh_my_subagents.integrations.claude.isolation import (
@@ -44,6 +46,10 @@ from oh_my_subagents.operator.provider import (
     OperatorTurnRequest,
 )
 from oh_my_subagents.operator.tools import OperatorTool, OperatorToolName
+from oh_my_subagents.operator.tools.execution import (
+    invoke_operator_tool,
+    reject_operator_tool_request,
+)
 from oh_my_subagents.product_identity import OMS_IDENTITY
 
 CLAUDE_OPERATOR_MCP_SERVER_NAME = OMS_IDENTITY.operator_mcp_server_name
@@ -65,16 +71,6 @@ _CLAUDE_OUTPUT_SCHEMA_OMITTED_KEYS = frozenset(
     }
 )
 _CLAUDE_LOCAL_DEFINITION_PREFIX = "#/$defs/"
-_TOOL_FAILURE_RESULT = json.dumps(
-    {
-        "error": "operator_operation_outcome_uncertain",
-        "message": (
-            "Oh My Subagents could not establish an accepted result. Do not repeat the operation "
-            "automatically; inspect authoritative product truth first."
-        ),
-    },
-    separators=(",", ":"),
-)
 _ClaudeClientFactory = Callable[[ClaudeAgentOptions], ClaudeSDKClient]
 _OperationResult = TypeVar("_OperationResult")
 
@@ -194,7 +190,6 @@ class ClaudeOperatorTurnRunner:
         request: OperatorTurnRequest,
         isolation_mode: ClaudeIsolationMode,
     ) -> ClaudeAgentOptions:
-        projected_tools = [_project_operator_tool(operator_tool) for operator_tool in self._tools]
         allowed_tools = [
             f"mcp__{CLAUDE_OPERATOR_MCP_SERVER_NAME}__{operator_tool.name.value}"
             for operator_tool in self._tools
@@ -204,11 +199,7 @@ class ClaudeOperatorTurnRunner:
             allowed_tools=allowed_tools,
             system_prompt=self._system_prompt,
             mcp_servers={
-                CLAUDE_OPERATOR_MCP_SERVER_NAME: create_sdk_mcp_server(
-                    name=CLAUDE_OPERATOR_MCP_SERVER_NAME,
-                    version=_CLAUDE_OPERATOR_MCP_SERVER_VERSION,
-                    tools=projected_tools,
-                )
+                CLAUDE_OPERATOR_MCP_SERVER_NAME: _build_claude_operator_mcp_server(self._tools)
             },
             strict_mcp_config=True,
             permission_mode="dontAsk",
@@ -269,27 +260,64 @@ def _project_operator_tool(operator_tool: OperatorTool) -> SdkMcpTool[Any]:
         operator_tool.input_schema,
     )
     async def call_operator_tool(arguments: object) -> dict[str, Any]:
-        try:
-            result = await operator_tool.call(arguments)
-        except Exception:
-            return {
-                "content": [{"type": "text", "text": _TOOL_FAILURE_RESULT}],
-                "is_error": True,
-            }
+        result = await invoke_operator_tool(operator_tool, arguments)
         return {
             "content": [
                 {
                     "type": "text",
                     "text": json.dumps(
-                        result,
+                        result.payload,
                         ensure_ascii=False,
                         separators=(",", ":"),
                     ),
                 }
-            ]
+            ],
+            "is_error": result.is_error,
         }
 
     return call_operator_tool
+
+
+def _build_claude_operator_mcp_server(
+    operator_tools: Sequence[OperatorTool],
+) -> McpSdkServerConfig:
+    """Keep advertised schemas while routing validation through the shared boundary."""
+
+    projected_tools = [_project_operator_tool(operator_tool) for operator_tool in operator_tools]
+    config = create_sdk_mcp_server(
+        name=CLAUDE_OPERATOR_MCP_SERVER_NAME,
+        version=_CLAUDE_OPERATOR_MCP_SERVER_VERSION,
+        tools=projected_tools,
+    )
+    tools_by_name = {operator_tool.name.value: operator_tool for operator_tool in operator_tools}
+    server = config["instance"]
+
+    @server.call_tool(validate_input=False)
+    async def call_operator_tool(
+        name: str,
+        arguments: dict[str, Any],
+    ) -> CallToolResult:
+        operator_tool = tools_by_name.get(name)
+        result = (
+            await invoke_operator_tool(operator_tool, arguments)
+            if operator_tool is not None
+            else reject_operator_tool_request(field_path="tool")
+        )
+        return CallToolResult(
+            content=[
+                TextContent(
+                    type="text",
+                    text=json.dumps(
+                        result.payload,
+                        ensure_ascii=False,
+                        separators=(",", ":"),
+                    ),
+                )
+            ],
+            isError=result.is_error,
+        )
+
+    return config
 
 
 async def _read_terminal_result(client: ClaudeSDKClient) -> ResultMessage:

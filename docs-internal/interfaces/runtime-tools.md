@@ -316,6 +316,8 @@ Explicit user text or a committed typed answer supplies intent for the action it
 
 Every leaf result passes the provider-neutral 327,680 UTF-16-code-unit size guard owned by the [Operator conversation contract](operator-conversation-contract.md#workflow-projections-and-receipts). The guard compact-serializes once with non-ASCII characters unescaped, fails closed above the bound, and never replays the leaf. Operator-private Workflow and Run projections plus compact mutation receipts keep legal results below that boundary; any post-commit boundary failure remains an uncertain effect and is not retried automatically.
 
+The same provider-neutral boundary validates each Operator request before its leaf handler starts. Malformed envelopes, unknown tool names, and schema-invalid arguments return the shared product-safe `OperationFailure` as a definitive rejection with no attempted mutation. A corrected call is a new request, not an automatic retry of the rejected request. Unknown failures after handler entry and post-handler boundary failures remain uncertain effects and are never replayed automatically. Codex dynamic tools and Claude's invocation-local MCP projection expose identical failure semantics.
+
 ## Explicitly absent tools
 
 Do not add:

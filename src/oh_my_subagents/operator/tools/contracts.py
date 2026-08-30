@@ -80,6 +80,11 @@ class OperatorTool:
 
     async def call(self, arguments: object) -> OperatorToolResult:
         request = self.input_model.model_validate(arguments)
+        return await self.call_validated(request)
+
+    async def call_validated(self, request: BaseModel) -> OperatorToolResult:
+        """Call the leaf after its provider-neutral boundary validated the input."""
+
         result = await self.handler(request)
         result_payload = result.model_dump(mode="json", by_alias=True)
         compact_result = json.dumps(

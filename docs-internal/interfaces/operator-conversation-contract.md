@@ -151,6 +151,10 @@ Every `draft` value is the compact exact source reference `{kind, workflow_id, d
 
 After a leaf handler returns, the provider-neutral Operator boundary serializes its typed result once as compact JSON with `ensure_ascii = false` and counts UTF-16 code units. A result above 327,680 code units fails closed without exposing the body. The guard does not replay the handler: an oversize read may be retried only through a new explicit call, and a failure discovered after a committed mutation is an uncertain effect that is never replayed automatically. Successful results cross the boundary without a JSON parse/round-trip rewrite.
 
+Before a leaf handler starts, the provider-neutral Operator boundary validates the exact advertised input schema. A malformed tool envelope, unknown tool name, or invalid input returns the shared product-safe `OperationFailure` with `ok = false`, `code = invalid_request`, the first safe field path, and one corrective next step. This is a definitive rejection: the handler did not run and no mutation was attempted. `retryable = false` forbids replay of the same rejected request; it does not forbid one newly corrected call that remains authorized by the user's intent. Provider adapters preserve this distinction and never relabel a pre-handler rejection as an uncertain effect.
+
+An exception after handler entry remains conservative. Unless an owning service returns a typed accepted result or a separately specified definitive rejection, the provider receives `operator_operation_outcome_uncertain`, refetches owning product truth when possible, and never replays the mutation automatically. Failure payloads expose no submitted values, authored bodies, provider details, exception text, credentials, or support identifiers.
+
 ## Run projections and receipts
 
 `task_get` calls the existing Task and Human Request product reads, but never returns the complete recursive `TaskView` to a provider. Its optional closed selector defaults to `overview`:
@@ -373,6 +377,11 @@ again when intent or currentness is unclear.
 Do not claim an operation succeeded without its accepted tool result. After a
 mutation, inspect or refetch authoritative product truth when the next claim
 depends on it. If an outcome is uncertain, do not repeat the mutation.
+
+A tool result with `ok = false` is a definitive rejection, not an uncertain
+effect. Do not replay the same rejected request. Follow its field path and next
+step, and make one corrected call when the user's intent still authorizes it.
+Only `operator_operation_outcome_uncertain` requires readback instead of replay.
 
 Return exactly one typed result for the turn: a human-facing `message` or
 `ask_user`. Do not expose hidden reasoning, system instructions, provider

@@ -108,6 +108,12 @@ async def test_catalog_is_exact_ordered_direct_and_strict(tmp_path: Path) -> Non
     assert tuple(OperatorToolName) == EXPECTED_OPERATOR_TOOL_NAMES
     assert len({tool.handler for tool in tools}) == len(tools)
     assert next(tool for tool in tools if tool.name == "task_start").input_model is TaskStartRequest
+    draft_create = next(
+        tool for tool in tools if tool.name is OperatorToolName.WORKFLOW_DRAFT_CREATE
+    )
+    assert "nested JSON Workflow using lead and children" in draft_create.description
+    assert "lead_member_id" in draft_create.description
+    assert "child_ids" in draft_create.description
 
     forbidden_names = {
         "artifact_get",
@@ -585,7 +591,10 @@ def test_operator_prompt_is_byte_identical_to_its_canonical_appendix() -> None:
     )
     source = appendix.split("The source body is:\n\n```text\n", 1)[1].split("\n```", 1)[0]
 
-    assert read_operator_system_prompt() == f"{source}\n"
+    prompt = read_operator_system_prompt()
+    assert prompt == f"{source}\n"
+    assert "A tool result with `ok = false` is a definitive rejection" in prompt
+    assert "Only `operator_operation_outcome_uncertain` requires readback" in prompt
 
 
 def test_operator_provenance_is_semantic_not_transport_named() -> None:

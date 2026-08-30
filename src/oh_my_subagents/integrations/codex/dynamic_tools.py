@@ -10,18 +10,14 @@ from openai_codex.models import JsonObject
 
 from oh_my_subagents.operator.provider import OperatorProviderUnavailableError
 from oh_my_subagents.operator.tools import OperatorTool
+from oh_my_subagents.operator.tools.execution import (
+    OperatorToolInvocationResult,
+    invoke_operator_tool,
+    reject_operator_tool_request,
+    uncertain_operator_tool_result,
+)
 
 _DYNAMIC_TOOL_METHOD = "item/tool/call"
-_TOOL_FAILURE_RESULT = json.dumps(
-    {
-        "error": "operator_operation_outcome_uncertain",
-        "message": (
-            "The Oh My Subagents operation did not return an accepted result. "
-            "Do not repeat it automatically; refetch current product truth."
-        ),
-    },
-    separators=(",", ":"),
-)
 
 
 class CodexDynamicToolBridge:
@@ -45,15 +41,15 @@ class CodexDynamicToolBridge:
         result: Future[JsonObject] = Future()
         with self._lock:
             if not self._is_active:
-                return _tool_failure_response()
+                return _render_tool_result(uncertain_operator_tool_result())
             try:
                 self._loop.call_soon_threadsafe(self._start_tool_call, params, result)
             except RuntimeError:
-                return _tool_failure_response()
+                return _render_tool_result(uncertain_operator_tool_result())
         try:
             return result.result()
         except BaseException:
-            return _tool_failure_response()
+            return _render_tool_result(uncertain_operator_tool_result())
 
     def _start_tool_call(
         self,
@@ -62,7 +58,7 @@ class CodexDynamicToolBridge:
     ) -> None:
         with self._lock:
             if not self._is_active:
-                result.set_result(_tool_failure_response())
+                result.set_result(_render_tool_result(uncertain_operator_tool_result()))
                 return
             task = self._loop.create_task(self._call_tool(params))
             self._pending_tasks.add(task)
@@ -78,31 +74,21 @@ class CodexDynamicToolBridge:
         try:
             response = task.result()
         except BaseException:
-            response = _tool_failure_response()
+            response = _render_tool_result(uncertain_operator_tool_result())
         result.set_result(response)
 
     async def _call_tool(self, params: JsonObject | None) -> JsonObject:
-        if params is None or params.get("namespace") is not None:
-            return _tool_failure_response()
+        if params is None:
+            return _render_tool_result(reject_operator_tool_request(field_path="arguments"))
+        if params.get("namespace") is not None:
+            return _render_tool_result(reject_operator_tool_request(field_path="namespace"))
         tool_name = params.get("tool")
         if not isinstance(tool_name, str):
-            return _tool_failure_response()
+            return _render_tool_result(reject_operator_tool_request(field_path="tool"))
         tool = self._tools.get(tool_name)
         if tool is None:
-            return _tool_failure_response()
-        try:
-            result = await tool.call(params.get("arguments"))
-            rendered = json.dumps(
-                result,
-                ensure_ascii=False,
-                separators=(",", ":"),
-            )
-        except Exception:
-            return _tool_failure_response()
-        return {
-            "contentItems": [{"type": "inputText", "text": rendered}],
-            "success": True,
-        }
+            return _render_tool_result(reject_operator_tool_request(field_path="tool"))
+        return _render_tool_result(await invoke_operator_tool(tool, params.get("arguments")))
 
     async def deactivate(self) -> None:
         with self._lock:
@@ -131,10 +117,15 @@ def _deny_server_request(method: str) -> JsonObject:
     raise OperatorProviderUnavailableError("Codex requested an unsupported Operator capability")
 
 
-def _tool_failure_response() -> JsonObject:
+def _render_tool_result(result: OperatorToolInvocationResult) -> JsonObject:
+    rendered = json.dumps(
+        result.payload,
+        ensure_ascii=False,
+        separators=(",", ":"),
+    )
     return {
-        "contentItems": [{"type": "inputText", "text": _TOOL_FAILURE_RESULT}],
-        "success": False,
+        "contentItems": [{"type": "inputText", "text": rendered}],
+        "success": not result.is_error,
     }
 
 

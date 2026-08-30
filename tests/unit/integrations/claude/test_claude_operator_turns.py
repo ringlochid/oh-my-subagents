@@ -334,7 +334,7 @@ async def test_claude_operator_continues_exact_thread_with_typed_answers() -> No
 
 
 @pytest.mark.asyncio
-async def test_claude_private_mcp_tool_calls_one_leaf_and_redacts_failures() -> None:
+async def test_claude_private_mcp_tool_rejects_invalid_calls_and_redacts_uncertainty() -> None:
     calls: list[tuple[OperatorToolName, str]] = []
     factory = FakeClaudeOperatorClientFactory(
         (_result(structured_output=_message_output("Done.")),)
@@ -366,6 +366,24 @@ async def test_claude_private_mcp_tool_calls_one_leaf_and_redacts_failures() -> 
             ),
         )
     )
+    invalid = await call_handler(
+        CallToolRequest(
+            method="tools/call",
+            params=CallToolRequestParams(
+                name=OperatorToolName.WORKFLOW_SEARCH.value,
+                arguments={"wrong": "shape"},
+            ),
+        )
+    )
+    unknown = await call_handler(
+        CallToolRequest(
+            method="tools/call",
+            params=CallToolRequestParams(
+                name="unknown_operator_tool",
+                arguments={},
+            ),
+        )
+    )
     rejected = await call_handler(
         CallToolRequest(
             method="tools/call",
@@ -391,12 +409,36 @@ async def test_claude_private_mcp_tool_calls_one_leaf_and_redacts_failures() -> 
         (OperatorToolName.WORKFLOW_SEARCH, "oversize-after-commit"),
     ]
     assert json.loads(accepted.root.content[0].text) == {"echo": "current truth"}
+    assert invalid.root.isError is True
+    assert json.loads(invalid.root.content[0].text) == {
+        "ok": False,
+        "code": "invalid_request",
+        "summary": "The tool request contains an unsupported or invalid field.",
+        "retryable": False,
+        "field_path": "value",
+        "suggested_next_step": (
+            "Correct the named field using the tool's current input schema and send one "
+            "corrected call."
+        ),
+    }
+    assert unknown.root.isError is True
+    assert json.loads(unknown.root.content[0].text) == {
+        "ok": False,
+        "code": "invalid_request",
+        "summary": "The tool request contains an unsupported or invalid field.",
+        "retryable": False,
+        "field_path": "tool",
+        "suggested_next_step": (
+            "Correct the named field using the tool's current input schema and send one "
+            "corrected call."
+        ),
+    }
     assert rejected.root.isError is True
     assert "private provider detail" not in rejected.root.content[0].text
     failure = json.loads(rejected.root.content[0].text)
     assert failure["error"] == "operator_operation_outcome_uncertain"
     assert "Do not repeat" in failure["message"]
-    assert "inspect authoritative product truth" in failure["message"]
+    assert "refetch current product truth" in failure["message"]
     assert uncertain_after_commit.root.isError is True
     assert json.loads(uncertain_after_commit.root.content[0].text) == failure
 

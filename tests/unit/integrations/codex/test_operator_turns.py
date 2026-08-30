@@ -169,7 +169,7 @@ async def test_codex_operator_resumes_exact_thread_with_typed_answer_and_ask_res
 
 
 @pytest.mark.asyncio
-async def test_codex_dynamic_tools_call_one_leaf_once_and_redact_every_failure() -> None:
+async def test_codex_dynamic_tools_reject_invalid_calls_and_redact_uncertain_failures() -> None:
     calls: list[tuple[OperatorToolName, str]] = []
     tool_name = OperatorToolName.WORKFLOW_SEARCH.value
     factory = _ClientFactory(
@@ -210,9 +210,24 @@ async def test_codex_dynamic_tools_call_one_leaf_once_and_redact_every_failure()
     assert json.loads(cast(list[dict[str, str]], accepted["contentItems"])[0]["text"]) == {
         "echo": "truth"
     }
-    for rejected in (invalid, unknown, oversized, failed):
+    for rejected, field_path in ((invalid, "value"), (unknown, "tool")):
         assert rejected["success"] is False
         text = cast(list[dict[str, str]], rejected["contentItems"])[0]["text"]
+        payload = json.loads(text)
+        assert payload == {
+            "ok": False,
+            "code": "invalid_request",
+            "summary": "The tool request contains an unsupported or invalid field.",
+            "retryable": False,
+            "field_path": field_path,
+            "suggested_next_step": (
+                "Correct the named field using the tool's current input schema and send one "
+                "corrected call."
+            ),
+        }
+    for uncertain in (oversized, failed):
+        assert uncertain["success"] is False
+        text = cast(list[dict[str, str]], uncertain["contentItems"])[0]["text"]
         payload = json.loads(text)
         assert payload["error"] == "operator_operation_outcome_uncertain"
         assert "Do not repeat it automatically" in payload["message"]
