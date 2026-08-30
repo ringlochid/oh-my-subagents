@@ -20,6 +20,7 @@ from openai_codex.generated.v2_all import (
 from openai_codex.models import JsonObject
 from pydantic import BaseModel, ConfigDict, Field
 
+from oh_my_subagents.integrations.provider_process_launch import configure_codex_process_launch
 from oh_my_subagents.platform.provider_environment import provider_subprocess_environment_overrides
 from oh_my_subagents.providers import ManagedExtensionMode, ManagedSandboxMode, NetworkAccess
 from oh_my_subagents.runtime.providers.contracts import (
@@ -129,6 +130,7 @@ def build_codex_client(
 ) -> CodexClient:
     """Launch against the real provider home while isolating one invocation."""
 
+    configure_codex_process_launch()
     return CodexClient(
         CodexConfig(
             config_overrides=codex_process_isolation_overrides(extension_mode),

@@ -6,9 +6,10 @@ import os
 from collections.abc import Sequence
 from pathlib import Path
 
-from claude_agent_sdk import ClaudeSDKClient
+from claude_agent_sdk import ClaudeAgentOptions, ClaudeSDKClient
 
 from oh_my_subagents.integrations.claude.native_identity import ClaudeIsolationMode
+from oh_my_subagents.integrations.provider_process_launch import configure_claude_process_launch
 from oh_my_subagents.platform.provider_environment import (
     ANTHROPIC_API_KEY,
     provider_subprocess_environment_overrides,
@@ -61,6 +62,13 @@ _ISOLATION_ENVIRONMENT = {
 
 class ClaudeStartupIsolationError(RuntimeError):
     """The pinned CLI could not prove the requested invocation boundary."""
+
+
+def build_claude_client(options: ClaudeAgentOptions) -> ClaudeSDKClient:
+    """Build one Claude SDK client with native Windows background launch behavior."""
+
+    configure_claude_process_launch()
+    return ClaudeSDKClient(options)
 
 
 def claude_isolation_settings() -> str:
@@ -315,6 +323,7 @@ __all__ = [
     "CLAUDE_INHERITED_DISALLOWED_TOOLS",
     "CLAUDE_MCP_STARTUP_TIMEOUT_SECONDS",
     "ClaudeStartupIsolationError",
+    "build_claude_client",
     "claude_isolation_environment",
     "claude_isolation_extra_args",
     "claude_isolation_settings",

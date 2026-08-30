@@ -19,6 +19,7 @@ from pydantic import ValidationError
 
 from oh_my_subagents.integrations.claude.isolation import (
     CLAUDE_ALWAYS_DISALLOWED_TOOLS,
+    build_claude_client,
     claude_isolation_environment,
     claude_isolation_extra_args,
     claude_isolation_settings,
@@ -94,7 +95,7 @@ class ClaudeOperatorTurnRunner:
         tools: Sequence[OperatorTool],
         status: OperatorRunnerStatus,
         working_directory: Path | None = None,
-        client_factory: _ClaudeClientFactory = ClaudeSDKClient,
+        client_factory: _ClaudeClientFactory = build_claude_client,
         authentication_reader: Callable[[], ClaudeAuthenticationState] = read_claude_authentication,
         endpoint_policy_reader: Callable[
             [], ClaudeEndpointPolicyState

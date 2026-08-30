@@ -18,6 +18,7 @@ from oh_my_subagents.integrations.claude.isolation import (
     CLAUDE_ALWAYS_DISALLOWED_TOOLS,
     CLAUDE_INHERITED_DISALLOWED_TOOLS,
     ClaudeStartupIsolationError,
+    build_claude_client,
     claude_isolation_environment,
     claude_isolation_extra_args,
     claude_task_settings,
@@ -103,7 +104,7 @@ class ClaudeAdapter:
     def __init__(
         self,
         *,
-        client_factory: Callable[[ClaudeAgentOptions], ClaudeSDKClient] = ClaudeSDKClient,
+        client_factory: Callable[[ClaudeAgentOptions], ClaudeSDKClient] = build_claude_client,
         authentication_reader: Callable[[], ClaudeAuthenticationState] = read_claude_authentication,
         endpoint_policy_reader: Callable[
             [], ClaudeEndpointPolicyState

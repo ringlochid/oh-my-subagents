@@ -15,6 +15,7 @@ from oh_my_subagents.integrations.claude.native_identity import (
     read_claude_endpoint_policy,
     read_claude_invocation_readiness,
 )
+from oh_my_subagents.integrations.provider_process_launch import provider_process_creation_flags
 from oh_my_subagents.runtime.providers import ProviderAuthenticationMethod
 
 
@@ -57,10 +58,10 @@ def test_claude_auth_status_accepts_subscription_and_api_key_without_account_rea
         "oh_my_subagents.integrations.claude.native_identity.bundled_claude_path",
         lambda: "/sdk/claude",
     )
-    command_calls: list[list[str]] = []
+    command_calls: list[tuple[list[str], dict[str, object]]] = []
 
-    def run(command: list[str], **_kwargs: object) -> subprocess.CompletedProcess[str]:
-        command_calls.append(command)
+    def run(command: list[str], **kwargs: object) -> subprocess.CompletedProcess[str]:
+        command_calls.append((command, kwargs))
         return subprocess.CompletedProcess(
             command,
             0,
@@ -82,7 +83,8 @@ def test_claude_auth_status_accepts_subscription_and_api_key_without_account_rea
     assert state.method is expected
     assert state.code == "claude_available"
     assert state.subscription_class is subscription_class
-    assert command_calls == [["/sdk/claude", "auth", "status", "--json"]]
+    assert command_calls[0][0] == ["/sdk/claude", "auth", "status", "--json"]
+    assert command_calls[0][1]["creationflags"] == provider_process_creation_flags()
     assert not hasattr(state, "email")
     assert not hasattr(state, "org_id")
 

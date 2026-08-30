@@ -13,6 +13,7 @@ from typing import Any
 
 import claude_agent_sdk
 
+from oh_my_subagents.integrations.provider_process_launch import provider_process_creation_flags
 from oh_my_subagents.platform.provider_environment import (
     ANTHROPIC_API_KEY,
     provider_subprocess_environment,
@@ -141,6 +142,7 @@ def read_claude_authentication(
             [str(bundled_claude_path()), "auth", "status", "--json"],
             check=False,
             capture_output=True,
+            creationflags=provider_process_creation_flags(),
             env=provider_subprocess_environment(allowed_keys=frozenset({ANTHROPIC_API_KEY})),
             text=True,
             timeout=CLAUDE_AUTH_STATUS_TIMEOUT_SECONDS,
