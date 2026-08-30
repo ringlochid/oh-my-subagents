@@ -6,7 +6,7 @@ This page owns distribution contents, installed verification, exact schema admis
 
 ## Distribution boundary
 
-`pyproject.toml` is the package contract. The distribution is `oh-my-subagents` at version `0.3.1`, the canonical console command is `oms`, the temporary compatibility command is `banksia`, and the canonical Python import package is `oh_my_subagents`. Python 3.12 or newer is required.
+`pyproject.toml` is the package contract. The distribution is `oh-my-subagents` at version `0.3.2`, the canonical console command is `oms`, the temporary compatibility command is `banksia`, and the canonical Python import package is `oh_my_subagents`. Python 3.12 or newer is required.
 
 The built wheel contains:
 

@@ -63,7 +63,7 @@ def package_version() -> str:
     try:
         return version("oh-my-subagents")
     except PackageNotFoundError:
-        return "0.3.1"
+        return "0.3.2"
 
 
 __all__ = [
