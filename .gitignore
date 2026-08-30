@@ -44,3 +44,7 @@ references/
 /definitions/
 docs-internal/execution/
 /docs-internal/verification/
+
+# Local launch and promotion working files
+/docs/assets/oms-product-hunt-*
+/scripts/launch-video/
