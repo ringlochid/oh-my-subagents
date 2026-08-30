@@ -5,6 +5,7 @@ import asyncio
 from collections.abc import Mapping
 from dataclasses import dataclass
 from pathlib import Path
+from typing import cast
 
 import click
 
@@ -252,13 +253,16 @@ def _prompt_local_init_settings(
             is_recommended_accepted=True,
         )
 
-    data_dir = click.prompt(
-        "Data directory",
-        default=str(data_dir),
-        type=click.Path(
-            path_type=Path,
-            file_okay=False,
-            resolve_path=True,
+    data_dir = cast(
+        Path,
+        click.prompt(
+            "Data directory",
+            default=str(data_dir),
+            type=click.Path(
+                path_type=Path,
+                file_okay=False,
+                resolve_path=True,
+            ),
         ),
     )
     prepared.data_dir = str(data_dir)

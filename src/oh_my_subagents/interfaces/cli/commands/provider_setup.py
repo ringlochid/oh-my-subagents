@@ -213,9 +213,9 @@ def _select_primary_provider(
 ) -> ProviderKind | None:
     emit_provider_choices()
     if args.provider is not None:
-        selected = ProviderKind(args.provider)
-        click.echo(f"Provider to configure: {selected.value} (from --provider)")
-        return selected
+        selected_provider = ProviderKind(args.provider)
+        click.echo(f"Provider to configure: {selected_provider.value} (from --provider)")
+        return selected_provider
 
     configured = tuple(
         status.kind for status in collect_provider_statuses(settings) if status.is_configured
@@ -228,12 +228,12 @@ def _select_primary_provider(
         default_provider = configured[0]
     else:
         default_provider = ProviderKind.CODEX
-    selected = click.prompt(
+    selected_choice = click.prompt(
         "Provider to configure",
         type=click.Choice((*_PROVIDER_CHOICES.choices, "cancel")),
         default=default_provider.value,
     )
-    return None if selected == "cancel" else ProviderKind(selected)
+    return None if selected_choice == "cancel" else ProviderKind(selected_choice)
 
 
 def _configure_and_check_provider(

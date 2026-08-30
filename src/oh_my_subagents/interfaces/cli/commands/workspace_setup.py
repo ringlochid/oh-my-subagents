@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import cast
 
 import click
 
@@ -19,16 +20,19 @@ def guide_default_workspace(config_path: Path) -> int:
     with command_env(config_path=config_path):
         settings = load_settings()
     current_workspace = settings.controller_workspace or Path.cwd()
-    workspace = click.prompt(
-        "Default workspace",
-        default=str(current_workspace),
-        type=click.Path(
-            exists=True,
-            file_okay=False,
-            dir_okay=True,
-            readable=True,
-            resolve_path=True,
-            path_type=Path,
+    workspace = cast(
+        Path,
+        click.prompt(
+            "Default workspace",
+            default=str(current_workspace),
+            type=click.Path(
+                exists=True,
+                file_okay=False,
+                dir_okay=True,
+                readable=True,
+                resolve_path=True,
+                path_type=Path,
+            ),
         ),
     )
     normalized_workspace = normalize_controller_workspace(workspace)
