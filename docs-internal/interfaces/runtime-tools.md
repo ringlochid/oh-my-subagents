@@ -263,6 +263,8 @@ Do not persist the binding or write it into user/provider configuration. A same-
 
 ## Operator tools
 
+`workflow_authoring_options` reads stable Workflow fields and configured defaults from controller truth. Its Operator-private result may also contain a transient, complete provider-reported Codex model catalog. The catalog is queried only when this operation is called; unavailable, timed-out, or incomplete provider data is returned as `null`, which directs the Operator to inherit the configured model default. It is not a public Workflow schema field, durable runtime truth, or provider-readiness check.
+
 The complete Operator catalog is defined by [Interfaces, Console, and Operator](console-and-operator.md) and the [Operator conversation contract](operator-conversation-contract.md). It is exactly:
 
 ```text

@@ -28,6 +28,8 @@ The Operator may ask a typed clarification, then create and edit the controller-
 
 The Operator has exact Workflow draft operations; it does not have generic file editing or filesystem authority. Review the resulting draft in the Console, validate it, and give an explicit publish instruction when it is ready.
 
+You can also supply a strong Workflow as a structural reference. The Operator should preserve useful responsibility and review boundaries while adapting the tree, not copy its prose or repeat generic Task-member rules. If you request an explicit Codex model, the Operator uses the current provider-reported choices returned by authoring options; when that catalog is unavailable, it leaves the model unset so the configured default applies.
+
 ## Write strong responsibilities
 
 Use these tests for every Member:

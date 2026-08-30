@@ -13,6 +13,9 @@ from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from oh_my_subagents.config import Environment, Settings, format_loopback_authority, get_settings
+from oh_my_subagents.integrations.codex.model_options import (
+    read_codex_operator_model_options,
+)
 from oh_my_subagents.integrations.operator import (
     ConfiguredOperatorTurnRunner,
     build_operator_turn_runner,
@@ -244,6 +247,9 @@ def _build_application_runtime(settings: Settings) -> _ApplicationRuntime:
             session_factory=_runtime_session_context,
             dispatch_dependencies=dispatch_opening_dependencies,
             provider_adapters=provider_adapter_registry,
+            codex_model_options_reader=(
+                read_codex_operator_model_options if settings.codex.enabled else None
+            ),
         ),
     )
     operator_conversation_service = OperatorConversationService(

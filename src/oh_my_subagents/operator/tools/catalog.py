@@ -4,7 +4,10 @@ from oh_my_subagents.config import Settings
 from oh_my_subagents.operator.conversation_reads import OperatorSessionFactory
 from oh_my_subagents.operator.tools.contracts import OperatorTool
 from oh_my_subagents.operator.tools.runtime import build_runtime_operator_tools
-from oh_my_subagents.operator.tools.workflows import build_workflow_operator_tools
+from oh_my_subagents.operator.tools.workflows import (
+    OperatorModelOptionsReader,
+    build_workflow_operator_tools,
+)
 from oh_my_subagents.runtime.dispatch.preparation import DispatchOpeningDependencies
 from oh_my_subagents.runtime.providers import ProviderAdapterRegistry
 
@@ -15,6 +18,7 @@ def build_operator_tools(
     session_factory: OperatorSessionFactory,
     dispatch_dependencies: DispatchOpeningDependencies,
     provider_adapters: ProviderAdapterRegistry | None = None,
+    codex_model_options_reader: OperatorModelOptionsReader | None = None,
 ) -> tuple[OperatorTool, ...]:
     """Bind the exact ordered Oh My Subagents Operator catalog to product-service leaves."""
 
@@ -22,6 +26,7 @@ def build_operator_tools(
         *build_workflow_operator_tools(
             settings=settings,
             session_factory=session_factory,
+            codex_model_options_reader=codex_model_options_reader,
         ),
         *build_runtime_operator_tools(
             settings=settings,

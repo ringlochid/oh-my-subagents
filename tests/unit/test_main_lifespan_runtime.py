@@ -109,9 +109,15 @@ def test_app_composes_one_operator_prompt_tool_catalog_and_runner(
     runner = RecordingOperatorRunner(events)
     tools = (object(),)
     calls: list[dict[str, object]] = []
+    tool_calls: list[dict[str, object]] = []
 
     monkeypatch.setattr(main_module, "read_operator_system_prompt", lambda: "operator prompt")
-    monkeypatch.setattr(main_module, "build_operator_tools", lambda **_kwargs: tools)
+
+    def build_tools(**kwargs: object) -> tuple[object, ...]:
+        tool_calls.append(kwargs)
+        return tools
+
+    monkeypatch.setattr(main_module, "build_operator_tools", build_tools)
 
     def build_runner(**kwargs: object) -> RecordingOperatorRunner:
         calls.append(kwargs)
@@ -123,6 +129,11 @@ def test_app_composes_one_operator_prompt_tool_catalog_and_runner(
 
     assert app.state.operator_turn_runner is runner
     assert app.state.operator_conversation_service.read_status().availability == "available"
+    assert tool_calls[0]["codex_model_options_reader"] is (
+        main_module.read_codex_operator_model_options
+        if main_module.get_settings().codex.enabled
+        else None
+    )
     assert calls == [
         {
             "settings": main_module.get_settings(),

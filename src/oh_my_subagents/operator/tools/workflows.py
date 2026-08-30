@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from collections.abc import Awaitable
+from collections.abc import Awaitable, Callable
 from dataclasses import dataclass
 from typing import TypeVar
 
@@ -20,6 +20,11 @@ from oh_my_subagents.operator.tools.contracts import (
     WorkflowPublishedSelection,
     WorkflowSearchInput,
     bind_operator_tool,
+)
+from oh_my_subagents.operator.tools.model_options import (
+    OperatorProviderModelOption,
+    OperatorWorkflowAuthoringOptions,
+    map_operator_workflow_authoring_options,
 )
 from oh_my_subagents.operator.tools.workflow_projection import (
     OperatorPublishedWorkflowSource,
@@ -51,7 +56,6 @@ from oh_my_subagents.workflows.authoring import (
     validate_workflow_draft,
 )
 from oh_my_subagents.workflows.authoring_contracts import (
-    WorkflowAuthoringOptions,
     WorkflowSearchResponse,
 )
 from oh_my_subagents.workflows.catalog import (
@@ -75,12 +79,16 @@ from oh_my_subagents.workflows.service_errors import (
 )
 
 ResultT = TypeVar("ResultT")
+type OperatorModelOptionsReader = Callable[
+    [], Awaitable[tuple[OperatorProviderModelOption, ...] | None]
+]
 
 
 @dataclass(frozen=True, slots=True)
 class _WorkflowOperatorLeaves:
     settings: Settings
     session_factory: OperatorSessionFactory
+    codex_model_options_reader: OperatorModelOptionsReader | None
 
     async def search(self, request: WorkflowSearchInput) -> WorkflowSearchResponse:
         async with self.session_factory() as session:
@@ -169,9 +177,17 @@ class _WorkflowOperatorLeaves:
     async def authoring_options(
         self,
         request: EmptyOperatorToolInput,
-    ) -> WorkflowAuthoringOptions:
+    ) -> OperatorWorkflowAuthoringOptions:
         del request
-        return build_workflow_authoring_options(self.settings)
+        codex_models = (
+            await self.codex_model_options_reader()
+            if self.codex_model_options_reader is not None
+            else None
+        )
+        return map_operator_workflow_authoring_options(
+            build_workflow_authoring_options(self.settings),
+            codex_models=codex_models,
+        )
 
     async def create_draft(
         self,
@@ -287,10 +303,12 @@ def build_workflow_operator_tools(
     *,
     settings: Settings,
     session_factory: OperatorSessionFactory,
+    codex_model_options_reader: OperatorModelOptionsReader | None = None,
 ) -> tuple[OperatorTool, ...]:
     leaves = _WorkflowOperatorLeaves(
         settings=settings,
         session_factory=session_factory,
+        codex_model_options_reader=codex_model_options_reader,
     )
     return (
         *_build_workflow_read_tools(leaves),
@@ -325,7 +343,9 @@ def _build_workflow_read_tools(
             name=OperatorToolName.WORKFLOW_AUTHORING_OPTIONS,
             description=(
                 "Read the fields, providers, sandbox choices, capabilities, and configured "
-                "defaults accepted by Workflow authoring."
+                "defaults accepted by Workflow authoring, plus verified current Codex model "
+                "choices when available. A null model list means inherit the configured "
+                "provider default."
             ),
             input_model=EmptyOperatorToolInput,
             handler=leaves.authoring_options,
@@ -413,4 +433,4 @@ async def _run_with_compact_stale_error(
     raise OperatorWorkflowDraftStaleError(stale_draft) from None
 
 
-__all__ = ["build_workflow_operator_tools"]
+__all__ = ["OperatorModelOptionsReader", "build_workflow_operator_tools"]
