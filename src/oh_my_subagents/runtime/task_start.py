@@ -299,7 +299,9 @@ def _validate_workflow_execution(
         try:
             provider = resolve_provider_route(
                 provider=provider_selection_from_mapping(
-                    member.provider.model_dump(mode="json") if member.provider is not None else None
+                    member.provider.model_dump(mode="json", exclude_none=True)
+                    if member.provider is not None
+                    else None
                 ),
                 settings=dependencies.settings,
                 available_adapter_kinds=dependencies.available_adapter_kinds,

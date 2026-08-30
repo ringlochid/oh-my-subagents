@@ -27,6 +27,13 @@ from oh_my_subagents.runtime.workspace.admission import (
     TASK_INITIALIZATION_MARKER,
     recover_task_workspace_admissions,
 )
+from oh_my_subagents.workflows.contracts import (
+    CodexProviderSelection,
+    NormalizedMember,
+    NormalizedWorkflow,
+    WorkflowProvenance,
+)
+from oh_my_subagents.workflows.publication import publish_workflow_revision
 from tests.helpers.generic_workflow import GENERIC_WORKFLOW_ID, publish_generic_workflow
 from tests.helpers.workflow_runtime import initialized_workflow_database
 
@@ -80,6 +87,49 @@ async def test_task_start_preserves_long_prompt_and_file_values(
         }
         for rendered in rendered_files
     ] == [{"path": file_path, "description": file_description}]
+
+
+async def test_task_start_accepts_omitted_optional_provider_overrides(
+    tmp_path: Path,
+) -> None:
+    workspace = tmp_path / "workspace"
+    workspace.mkdir()
+    workflow = NormalizedWorkflow(
+        kind="workflow",
+        id="provider-defaults-workflow",
+        description="Exercise managed-provider defaults during Task start.",
+        lead=NormalizedMember(
+            id="lead",
+            title="Lead",
+            provider=CodexProviderSelection(
+                kind="codex",
+                model="gpt-5.6-luna",
+                effort="low",
+            ),
+        ),
+    )
+
+    async with initialized_workflow_database(tmp_path) as session_factory:
+        async with session_factory() as session:
+            await publish_workflow_revision(
+                session,
+                workflow=workflow,
+                provenance=WorkflowProvenance.USER,
+                should_update_current=True,
+            )
+            await session.commit()
+            response = await start_task(
+                TaskStartRequest(
+                    workflow=workflow.id,
+                    prompt="Complete the requested work.",
+                    workspace=workspace,
+                ),
+                session=session,
+                dependencies=_dependencies(workspace),
+            )
+
+    assert response.task_id.startswith("t_")
+    assert (workspace / response.manifest).is_file()
 
 
 async def test_concurrent_task_starts_share_one_workspace_admission_lane(
