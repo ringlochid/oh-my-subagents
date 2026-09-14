@@ -11,8 +11,9 @@ from jsonschema import Draft202012Validator  # type: ignore[import-untyped]
 from jsonschema.exceptions import SchemaError  # type: ignore[import-untyped]
 from referencing.exceptions import Unresolvable
 
+from scripts.docs.markdown_links import iter_markdown_links
+
 from .authored_guidance import generic_guidance_messages, seed_dependency_messages
-from .links import iter_markdown_links
 from .models import ContractFinding
 from .strict_yaml import StrictYamlError, load_strict_yaml
 from .workflow_schema import workflow_schema_reference_findings

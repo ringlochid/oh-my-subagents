@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+{% for file in pages %}
+  {% if not file.page.is_link and file.page.canonical_url %}
+  <url><loc>{{ file.page.canonical_url | e }}</loc></url>
+  {% endif %}
+{% endfor %}
+</urlset>

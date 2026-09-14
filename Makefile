@@ -208,7 +208,19 @@ test-docs: $(PYTHON)
 	TMPDIR=$(CURDIR)/tmp PYTHONPATH=$(CURDIR)/src $(PYTEST) \
 		tests/unit/test_docs_contract.py \
 		tests/unit/test_workflow_fixture_contract.py \
-		tests/unit/test_prompt_catalog_tooling.py
+		tests/unit/test_prompt_catalog_tooling.py \
+		tests/unit/docs_site
+
+.PHONY: docs-site-install docs-site-build docs-site-check
+
+docs-site-install: $(PYTHON)
+	$(PYTHON) -m pip install --require-hashes -r scripts/docs/site/requirements.txt
+
+docs-site-build: $(PYTHON)
+	$(PYTHON) -m mkdocs build --strict
+
+docs-site-check: docs-site-build
+	$(PYTHON) -m scripts.docs.site.verify
 
 check-docs: $(PYTHON)
 	$(MAKE) docs-format-check

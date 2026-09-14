@@ -5,7 +5,8 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "oh-my-subagents"
 version = "0.3.2"
-description = "Turn ad-hoc subagents into durable, accountable AI teams."
+description = "Local subagent orchestration for Codex and Claude with persistent task state and reusable teams."
+keywords = ["subagents", "multi-agent", "agent-orchestration", "codex", "claude", "self-hosted"]
 readme = "README.md"
 license = "MIT"
 license-files = ["LICENSE"]
@@ -57,8 +58,8 @@ oms = "oh_my_subagents.interfaces.cli.main:main"
 banksia = "oh_my_subagents.interfaces.cli.main:legacy_main"
 
 [project.urls]
-Homepage = "https://github.com/ringlochid/oh-my-subagents"
-Documentation = "https://github.com/ringlochid/oh-my-subagents/tree/main/docs"
+Homepage = "https://ringlochid.me/oh-my-subagents/"
+Documentation = "https://ringlochid.me/oh-my-subagents/start/getting-started/"
 Issues = "https://github.com/ringlochid/oh-my-subagents/issues"
 Source = "https://github.com/ringlochid/oh-my-subagents"
 

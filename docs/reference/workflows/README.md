@@ -1,3 +1,8 @@
+---
+title: Workflow YAML and JSON schema reference
+description: Author OMS Workflow definitions with the supported YAML and JSON schema, recursive Member fields, provider overrides, capabilities, and validation rules.
+---
+
 # Workflow definition reference
 
 The machine-readable public contract is [`workflow-definition.schema.yaml`](workflow-definition.schema.yaml). It is JSON Schema Draft 2020-12 and validates the common JSON-compatible model accepted from JSON and YAML.

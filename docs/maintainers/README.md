@@ -1,3 +1,8 @@
+---
+title: Maintainer build, documentation, and release checks
+description: Run OMS documentation, website, backend, Console, package, and installed-distribution checks using the repository's owned verification lanes.
+---
+
 # Maintainer verification
 
 The root [agent contract](../../AGENTS.md) owns repository policy, mandatory read order, the command matrix, delegation rules, and closeout requirements. The [root style contract](../../STYLE.md) owns measurable code standards. This page routes a maintainer from a public claim to its internal owner and executable proof; it does not replace either root file.
@@ -53,6 +58,17 @@ MYPYPATH=src mypy scripts/docs
 ```
 
 The prompt check compares shipped assets with their canonical source bodies and validates the maintained behavior scenarios.
+
+## Public website checks
+
+For the public documentation website, install the pinned build dependencies and check the rendered output:
+
+```bash
+make docs-site-install
+make docs-site-check
+```
+
+`docs-site-check` builds strict static HTML, then checks page metadata, canonical URLs, local links and fragments, sitemap coverage, and publication boundaries. It complements `make check-docs`. The [public documentation publishing contract](../../docs-internal/operations/public-documentation.md) owns deployment and live checks.
 
 ## Generated API and Console contracts
 

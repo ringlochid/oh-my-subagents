@@ -196,6 +196,8 @@ Docs commands:
 - `make docs-prompt-check` validates prompt assets, canonical source bodies, and behavior scenarios
 - `make test-docs` runs the focused docs-tooling unit lane
 - `make check-docs` runs the complete non-mutating docs gate
+- `make docs-site-install` installs the pinned public-site build dependencies
+- `make docs-site-check` builds the static website in strict mode and verifies generated metadata, local links, sitemap coverage, and public-output boundaries; run it for changes to public site content, navigation, templates, or tooling
 
 ### Applicability
 

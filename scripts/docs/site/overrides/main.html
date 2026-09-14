@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block extrahead %}
+  {% if page and page.is_homepage and config.extra.google_site_verification %}
+    <meta name="google-site-verification" content="{{ config.extra.google_site_verification }}">
+  {% endif %}
+  {% if page and page.canonical_url %}
+    <meta property="og:type" content="{{ 'website' if page.is_homepage else 'article' }}">
+    <meta property="og:site_name" content="{{ config.site_name }}">
+    <meta property="og:title" content="{{ page.meta.title or page.title }}">
+    <meta property="og:description" content="{{ page.meta.description }}">
+    <meta property="og:url" content="{{ page.canonical_url }}">
+    <meta property="og:image" content="{{ config.site_url }}assets/oms-how-it-works-v8.png">
+    <meta property="og:image:alt" content="Diagram of OMS delegation, persistent waits, and collected team returns">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ page.meta.title or page.title }}">
+    <meta name="twitter:description" content="{{ page.meta.description }}">
+    <meta name="twitter:image" content="{{ config.site_url }}assets/oms-how-it-works-v8.png">
+    <script type="application/ld+json">{{ page.meta.structured_data | tojson }}</script>
+  {% else %}
+    <meta name="robots" content="noindex">
+  {% endif %}
+{% endblock %}

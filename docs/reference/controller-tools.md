@@ -1,3 +1,8 @@
+---
+title: OMS controller tools for team Members and Operator
+description: Understand the supported controller tool surfaces for Task Members and the separate Operator, including delegation, checkpoints, waits, and product operations.
+---
+
 # Controller tools
 
 Oh My Subagents has two distinct typed operation catalogs:

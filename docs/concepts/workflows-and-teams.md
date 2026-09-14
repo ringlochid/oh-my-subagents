@@ -1,3 +1,8 @@
+---
+title: How AI team Workflows and responsibilities work
+description: Understand OMS responsibility trees, Members, adaptive delegation, provider selection, and explicit capabilities before designing a reusable AI team.
+---
+
 # Workflows and teams
 
 An Oh My Subagents Workflow is a reusable team of responsibilities. It answers **who is responsible**. The Task lead decides **what should happen next**, and the controller records **what actually happened**.

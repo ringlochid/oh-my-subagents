@@ -1,3 +1,8 @@
+---
+title: Configure OMS providers, databases, and sandbox access
+description: Reference OMS TOML settings, SQLite and PostgreSQL configuration, Codex and Claude providers, Operator selection, environment overrides, and sandbox limits.
+---
+
 # Configuration reference
 
 Oh My Subagents reads one selected TOML configuration, then applies environment overrides. Discover the selected path and effective redacted values through the passive CLI:

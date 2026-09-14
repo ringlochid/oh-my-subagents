@@ -1,6 +1,22 @@
-# Oh My Subagents documentation
+---
+title: Local subagent orchestration for Codex and Claude
+description: Run durable Codex and Claude agent teams locally. Reuse team definitions, persist delegated work, recover from interruptions, and inspect one accountable result.
+---
 
-Oh My Subagents is a local runtime for persistent, supervised parent–subagent delegation with Codex and Claude. Reusable responsibility trees define who owns the work while controller-owned state persists Assignments, waits, Checkpoints, recovery, and one accountable Result.
+# Durable AI teams for Codex and Claude
+
+**Turn ad-hoc subagents into durable, accountable AI teams.**
+
+Oh My Subagents is a local runtime for subagent orchestration with Codex and Claude. Build a reusable team, give its lead one concrete mission, and follow the work in a visual Console. The controller records delegation, waits, returned evidence, and one completed or blocked Result.
+
+[Install and run your first team](start/getting-started.md){ .md-button .md-button--primary } [Explore the source](https://github.com/ringlochid/oh-my-subagents){ .md-button }
+
+## Start with your provider
+
+- [Run a Codex agent team](guides/codex-agent-teams.md) — configure Codex, start a coding mission, and inspect the returned work.
+- [Run a Claude agent team](guides/claude-agent-teams.md) — configure Claude, check sandbox prerequisites, and start a research or coding team.
+- [Use independent code review](guides/multi-agent-code-review.md) — separate implementation, review, repair, and integrated verification.
+- [Recover interrupted agent work](guides/recover-interrupted-agents.md) — inspect the original run and continue from committed controller state.
 
 ## Why Oh My Subagents
 
@@ -8,6 +24,22 @@ Oh My Subagents is a local runtime for persistent, supervised parent–subagent 
 - **Delegate without polling** while the runtime commits Assignments, persists waits, supervises returns, and continues the parent.
 - **Recover from committed state** after a provider interruption, browser closure, or controller restart.
 - **Return one accountable Result** after the Task lead inspects the team's Checkpoints, evidence, and referenced files.
+
+![How OMS delegates work, persists a parent wait, and collects the complete team's returns](assets/oms-how-it-works-v8.png){ loading=lazy decoding=async fetchpriority=low }
+
+[Watch the Console tutorial](https://www.youtube.com/watch?v=-prDEZYpx9M) to see the product in use.
+
+## Install locally
+
+For a fresh installation with Python 3.12 or newer:
+
+```bash
+pipx install oh-my-subagents
+oms init
+oms service install
+```
+
+Open `http://127.0.0.1:18125/`. Linux, macOS 13+, and Windows 11 x64 are supported; SQLite is the default. The [installation guide](start/getting-started.md) covers provider authentication, platform requirements, and existing installations.
 
 ## Start here
 
@@ -44,3 +76,7 @@ Oh My Subagents is a local runtime for persistent, supervised parent–subagent 
 
 - [Contributing](../CONTRIBUTING.md) — prepare a source checkout, follow repository owners, work in a bounded slice, and report executable proof.
 - [Maintainer verification](maintainers/README.md) — run the repository's quality, contract, and release-readiness checks.
+
+## Project and licensing
+
+Oh My Subagents is maintained by [Leo Zhang and contributors](https://github.com/ringlochid/oh-my-subagents/graphs/contributors). The core is [MIT licensed](../LICENSE). The visual Console contains n8n-derived material and uses the [Sustainable Use License](../console/LICENSE); see its [attribution notice](../console/NOTICE).

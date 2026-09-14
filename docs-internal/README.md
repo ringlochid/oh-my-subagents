@@ -22,6 +22,7 @@ This is the maintainer-facing source of truth for Oh My Subagents's shipped prod
 - [Configuration and providers](operations/configuration-and-providers.md) owns configuration precedence, workspace defaults, provider selection, credentials, and adapter boundaries.
 - [Recovery and observability](operations/recovery-and-observability.md) owns startup recovery, runtime health, projections, support access, and audit readback.
 - [Package and reset](operations/package-and-reset.md) owns distribution contents, installed proof, schema verification, and destructive reset.
+- [Public documentation publishing](operations/public-documentation.md) owns the website, search metadata, deployment, and discovery checks.
 
 ## Decisions
 

@@ -1,3 +1,8 @@
+---
+title: Shared workspaces and agent deliverable files
+description: Understand OMS workspace boundaries, task directories, notes, artifacts, and file references, including what the controller preserves and what remains ordinary files.
+---
+
 # Workspace and files
 
 Every Task has one selected provider-visible workspace. All Members work in that same native filesystem and use their provider's ordinary file, search, editor, shell, and binary tools.

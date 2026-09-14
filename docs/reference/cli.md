@@ -1,3 +1,8 @@
+---
+title: OMS command-line reference
+description: Look up OMS commands for initialization, configuration, provider authentication, Workflows, Tasks, background services, database maintenance, and diagnostics.
+---
+
 # CLI reference
 
 The canonical installed entry point is `oms`. Run `oms COMMAND --help` for the exact flags in your installed version. The root `--debug` flag may appear before or after a subcommand and adds a traceback to unexpected failures. The temporary `banksia` compatibility command emits a migration notice and then runs the same implementation.
