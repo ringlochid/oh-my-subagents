@@ -1,3 +1,8 @@
+---
+title: Use the visual Console and conversational Operator
+description: Manage OMS Workflows and Runs in the browser, inspect team progress and Results, and use the separate Operator for controller-backed product operations.
+---
+
 # Use the Console and Operator
 
 The Console and Operator are two interfaces over the same controller-owned Workflows, Tasks, and legal operations. Use the Console for direct visual control and the Operator to translate ordinary language into those same bounded operations. Both read and change one authoritative team and run state.

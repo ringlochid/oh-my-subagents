@@ -1,3 +1,8 @@
+---
+title: Troubleshoot OMS installation, providers, and recovery
+description: Diagnose OMS setup, database, provider, Workflow, and runtime problems using supported commands, controller readback, and bounded recovery steps.
+---
+
 # Troubleshooting
 
 Begin with passive readback:

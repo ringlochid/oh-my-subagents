@@ -1,0 +1,100 @@
+site_name: Oh My Subagents
+site_url: https://ringlochid.me/oh-my-subagents/
+site_description: Local subagent orchestration for Codex and Claude with persistent task state, reusable teams, and interruption recovery.
+site_author: Leo Zhang
+repo_url: https://github.com/ringlochid/oh-my-subagents
+repo_name: ringlochid/oh-my-subagents
+edit_uri: edit/main/docs/
+docs_dir: docs
+site_dir: build/docs-site
+strict: true
+exclude_docs: |
+  assets/oms-product-hunt-*
+theme:
+  name: material
+  custom_dir: scripts/docs/site/overrides
+  language: en
+  font: false
+  logo: assets/oms-mark.svg
+  favicon: assets/oms-mark.svg
+  palette:
+    - scheme: default
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/brightness-4
+        name: Switch to dark mode
+    - scheme: slate
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/brightness-7
+        name: Switch to light mode
+  features:
+    - navigation.sections
+    - navigation.footer
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.action.edit
+plugins:
+  - search
+hooks:
+  - scripts/docs/site/hooks.py
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - toc:
+      permalink: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences
+extra_css:
+  - assets/site.css
+extra:
+  generator: false
+  google_site_verification: koikCm9zvKtSfFvjzOoU7a2MrYE2THqcqFclrrO90qU
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/ringlochid/oh-my-subagents
+      name: Oh My Subagents on GitHub
+    - icon: fontawesome/brands/python
+      link: https://pypi.org/project/oh-my-subagents/
+      name: Install Oh My Subagents from PyPI
+copyright: Copyright &copy; Oh My Subagents contributors. Core MIT; Console Sustainable Use License.
+validation:
+  nav:
+    omitted_files: warn
+  links:
+    not_found: warn
+    unrecognized_links: warn
+    anchors: warn
+nav:
+  - Overview: README.md
+  - Start:
+      - Installation and first run: start/getting-started.md
+      - Codex agent teams: guides/codex-agent-teams.md
+      - Claude agent teams: guides/claude-agent-teams.md
+      - Starter team catalog: starter-teams.md
+  - Practical workflows:
+      - Independent code review: guides/multi-agent-code-review.md
+      - Recover interrupted work: guides/recover-interrupted-agents.md
+      - Author a Workflow: guides/author-a-workflow.md
+      - Run and operate: guides/run-and-operate.md
+      - Console and Operator: guides/console-and-operator.md
+  - Concepts:
+      - Workflows and teams: concepts/workflows-and-teams.md
+      - Runtime and Results: concepts/runtime-and-results.md
+      - Workspace and files: concepts/workspace-and-files.md
+  - Reference:
+      - Configuration: reference/configuration.md
+      - Workflow schema: reference/workflows/README.md
+      - Command line: reference/cli.md
+      - HTTP API: reference/http-api.md
+      - Controller tools: reference/controller-tools.md
+  - Help:
+      - Troubleshooting: help/troubleshooting.md
+      - Migrate from Banksia: guides/migrate-from-banksia.md
+      - Maintainer verification: maintainers/README.md

@@ -1,3 +1,8 @@
+---
+title: Migrate an existing Banksia installation to OMS
+description: Preserve an existing installation's configuration, database, credentials, history, and service state when moving to the Oh My Subagents package and paths.
+---
+
 # Migrate from Banksia
 
 Oh My Subagents `0.3.x` moves the Python package, default platform directories, SQLite filename, provider environment file, new Task roots, prompt/MCP identifiers, and native service identity to OMS names. Migration is explicit: startup never moves state automatically.

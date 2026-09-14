@@ -17,6 +17,7 @@ LEGACY_IDENTITY_ALLOWED_PATHS = frozenset(
         "docs/guides/migrate-from-banksia.md",
         "docs/reference/cli.md",
         "docs/reference/configuration.md",
+        "mkdocs.yml",  # Public navigation links to the supported migration guide.
         "pyproject.toml",
         "scripts/docs/docs_contract/validator.py",
         "scripts/testing/installed_distribution/artifacts.py",

@@ -4,13 +4,14 @@ import re
 from collections import deque
 from pathlib import Path
 
-from .discovery import ROOT, discover_front_doors, iter_contract_markdown_files
-from .links import (
+from scripts.docs.markdown_links import (
     is_filename_style_label,
     iter_markdown_links,
     iter_non_fenced_lines,
     resolve_local_link,
 )
+
+from .discovery import ROOT, discover_front_doors, iter_contract_markdown_files
 from .models import ContractFinding, ContractReport, FrontDoor
 from .workflow_fixtures import workflow_fixture_findings
 

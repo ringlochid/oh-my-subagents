@@ -1,3 +1,8 @@
+---
+title: Tasks, durable delegation, Checkpoints, and Results
+description: Learn how OMS records Tasks and Assignments, collects team Checkpoints, and exposes the lead's completed or blocked Result with workspace file references.
+---
+
 # Runtime and results
 
 The user-facing runtime story is:

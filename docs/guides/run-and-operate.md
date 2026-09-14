@@ -1,3 +1,8 @@
+---
+title: Start, steer, pause, and inspect AI team runs
+description: Operate an OMS run, follow Activity, answer Human Requests, steer active Members, use legal run controls, and inspect the final Result and files.
+---
+
 # Run and operate work
 
 A run starts one published Workflow revision with one complete prompt, one workspace, and optional file references. The Console keeps ordinary operation semantic: who owns the work, what changed, what needs you, and what the team finally returned.

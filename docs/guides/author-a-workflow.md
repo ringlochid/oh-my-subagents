@@ -1,3 +1,8 @@
+---
+title: Create and publish a reusable AI team Workflow
+description: Design an OMS responsibility tree, configure Members and capabilities, validate the draft, and publish a stable Workflow revision for future Tasks.
+---
+
 # Author a Workflow
 
 A Workflow definition is a reusable team contract. Start from a packaged Starter, name responsibilities rather than phases, then validate and publish an immutable revision.

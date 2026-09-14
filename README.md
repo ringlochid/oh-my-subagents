@@ -4,17 +4,19 @@
 
 <p align="center"><strong>Turn ad-hoc subagents into durable, accountable AI teams.</strong></p>
 
-<p align="center">A local runtime for persistent, supervised parent–subagent delegation with Codex and Claude.</p>
+<p align="center">Local subagent orchestration for Codex and Claude, with persistent task state, reusable teams, and interruption recovery.</p>
 
 <p align="center"> <a href="https://pypi.org/project/oh-my-subagents/"><img src="https://img.shields.io/pypi/v/oh-my-subagents?cacheSeconds=300" alt="PyPI version"></a> <a href="https://pypi.org/project/oh-my-subagents/"><img src="https://img.shields.io/badge/python-%3E%3D3.12-3776AB?logo=python&logoColor=white" alt="Python 3.12 or newer"></a> </p>
 
-<p align="center"> <a href="docs/start/getting-started.md">Get started</a> · <a href="docs/README.md">Documentation</a> · <a href="examples/workflows/README.md">Starter teams</a> </p>
+<p align="center"> <a href="https://ringlochid.me/oh-my-subagents/start/getting-started/">Get started</a> · <a href="https://ringlochid.me/oh-my-subagents/">Documentation</a> · <a href="https://ringlochid.me/oh-my-subagents/starter-teams/">Starter teams</a> </p>
 
 <p align="center"> <img src="docs/assets/oms-intro.gif" alt="Console walkthrough: choose an accountable AI team, start a run, and review its progress and Result" width="720"> </p>
 
 <p align="center"><a href="https://www.youtube.com/watch?v=-prDEZYpx9M"><strong>▶ Watch the tutorial</strong></a></p>
 
 ## 🚀 Stop babysitting subagents
+
+Start with the [Codex team guide](docs/guides/codex-agent-teams.md), [Claude team guide](docs/guides/claude-agent-teams.md), or a concrete [independent code-review workflow](docs/guides/multi-agent-code-review.md).
 
 Ad-hoc delegation is easy to begin and surprisingly hard to operate. A parent spawns children, polls them, reconstructs ownership from chat, and hopes that a closed terminal or interrupted provider session did not erase the only useful account of what happened.
 

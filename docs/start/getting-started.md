@@ -1,3 +1,8 @@
+---
+title: Install Oh My Subagents and run your first AI team
+description: Install OMS on Linux, macOS, or Windows, configure Codex or Claude, start the local Console, and complete your first coding or research task.
+---
+
 # Getting started
 
 Install Oh My Subagents, configure an AI provider, and complete a first developer or researcher run.

@@ -1,3 +1,8 @@
+---
+title: OMS HTTP API and integration reference
+description: Integrate with the OMS loopback HTTP API using the product and support surfaces, generated schemas, runtime readback, and controller-owned operations.
+---
+
 # HTTP API reference
 
 Oh My Subagents serves three deliberately separate HTTP surfaces:

@@ -1,3 +1,5 @@
+"""Shared Markdown link parsing for docs validation and website publishing."""
+
 from __future__ import annotations
 
 import re
